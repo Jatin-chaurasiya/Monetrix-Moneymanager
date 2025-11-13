@@ -1,7 +1,5 @@
 package in.chaurasiya.moneymanager.Service;
 
-
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -14,7 +12,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.properties.mail.smtp.from}")
+    @Value("${app.mail.from}")
     private String fromEmail;
 
     public void sendEmail(String to, String subject, String body) {
@@ -25,9 +23,8 @@ public class EmailService {
             message.setSubject(subject);
             message.setText(body);
             mailSender.send(message);
-        }catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Email sending failed: " + e.getMessage());
         }
     }
-
 }
