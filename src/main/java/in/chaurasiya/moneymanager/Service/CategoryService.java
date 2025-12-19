@@ -33,6 +33,10 @@ public class CategoryService {
         List<CategoryEntity> categories = categoryRepository.findByProfileId(profile.getId());
         return categories.stream().map(this::toDTO).toList();
     }
+    //Delete category
+    public void deleteCategory(Long id){
+
+    }
 
 
     public List<CategoryDTO> getCategoriesTypeForCurrentUser(String type){

@@ -1,6 +1,5 @@
 package in.chaurasiya.moneymanager.Service;
 
-
 import in.chaurasiya.moneymanager.Entity.ProfileEntity;
 import in.chaurasiya.moneymanager.Repository.ProfileRepository;
 import in.chaurasiya.moneymanager.Util.JwtUtil;
@@ -25,9 +24,9 @@ public class ProfileService {
 
     private final ProfileRepository profileRepository;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final PasswordEncoder passwordEncoder;
 
     @Value("${app.activation.url}")
     private String activationURL;
@@ -36,7 +35,6 @@ public class ProfileService {
         ProfileEntity newProfile = toEntity(profileDTO);
         newProfile.setActivationToken(UUID.randomUUID().toString());
         newProfile = profileRepository.save(newProfile);
-        //send activation email
         String activationLink = activationURL+"/api/v1.0/activate?token=" + newProfile.getActivationToken();
         String subject = "Activate your Money Manager account";
         String body = "Click on the following link to activate your account: " + activationLink;
@@ -70,7 +68,7 @@ public class ProfileService {
     public boolean activateProfile(String activationToken) {
         return profileRepository.findByActivationToken(activationToken)
                 .map(profile -> {
-                    profile.setIsActive(true);
+                    profile.setIsActive(true);  // here Check account is activate or not..
                     profileRepository.save(profile);
                     return true;
                 })

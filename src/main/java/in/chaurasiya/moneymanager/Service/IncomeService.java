@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -73,6 +74,24 @@ public class IncomeService {
         List<IncomeEntity> list = incomeRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(profile.getId(), startDate, endDate, keyword, sort);
         return list.stream().map(this::toDTO).toList();
     }
+    // Update Income
+    public IncomeDTO UpdateIncome(Long id, IncomeDTO dto) {
+        IncomeEntity income = incomeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Income not found"));
+        Long profileId = income.getProfile().getId();
+        CategoryEntity category = categoryRepository
+                .findByIdAndProfileId(dto.getCategoryId(), profileId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        income.setName(dto.getName());
+        income.setAmount(dto.getAmount());
+        income.setDate(dto.getDate());
+        income.setIcon(dto.getIcon());
+        income.setCategory(category);
+        IncomeEntity updatedIncome = incomeRepository.save(income);
+        return toDTO(updatedIncome);
+    }
+
+
 
     //helper methods
     private IncomeEntity toEntity(IncomeDTO dto, ProfileEntity profile, CategoryEntity category) {
