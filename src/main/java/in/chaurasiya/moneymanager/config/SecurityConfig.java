@@ -39,7 +39,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/login",
                                 "/register",
-                                "/auth/google/**"
+                                "/auth/google/**",
+                                "/auth/**"  // ✅ FIXED: Allow all /auth/* endpoints
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -76,7 +77,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:5173", "http://localhost:5174"));
+
+        // ✅ FIXED: Added production URLs
+        configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "https://monetrix-moneymanager.onrender.com",
+                "https://*.onrender.com"
+        ));
+
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
@@ -85,7 +94,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 
     @Bean
     public RestTemplate restTemplate() {
